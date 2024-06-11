@@ -13,7 +13,7 @@ intents.message_content = True
 bot = discord.Bot(intents=intents)
 
 TOKEN = 'YOUR_DISCORD_BOT_TOKEN'
-template_path = 'Twin Towns Certificate Template.docx'
+template_path = 'Twin Towns Certificate Template.odt'
 certificates_dir = 'certificates'
 
 # Ensure the certificates directory exists
@@ -46,12 +46,12 @@ async def twin(
         reaction, user = await bot.wait_for('reaction_add', timeout=60.0, check=check)
         if str(reaction.emoji) == '✅':
             await ctx.send_followup(f'Generating twin towns certificate for {town1}-{nation1} and {town2}-{nation2}...')
-            output_docx_path = os.path.join(certificates_dir, f'{nation1}-{town1}_{nation2}-{town2}.docx')
+            output_odt_path = os.path.join(certificates_dir, f'{nation1}-{town1}_{nation2}-{town2}.odt')
             output_pdf_path = os.path.join(certificates_dir, f'{nation1}-{town1}_{nation2}-{town2}.pdf')
             submitter_nickname = ctx.author.nick if ctx.author.nick else ctx.author.name
             approver_member = ctx.guild.get_member(approver_user.id)
             approver_nickname = approver_member.nick if approver_member.nick else approver_member.name
-            generate_certificate(town1, nation1, town2, nation2, submitter_nickname, approver_nickname, output_docx_path, output_pdf_path)
+            generate_certificate(town1, nation1, town2, nation2, submitter_nickname, approver_nickname, output_odt_path, output_pdf_path)
             await ctx.send_followup(file=discord.File(output_pdf_path))
         else:
             await ctx.send_followup('Twin towns request declined.')
@@ -71,7 +71,7 @@ def replace_text_in_tables(tables, replacements):
             for cell in row.cells:
                 replace_text_in_paragraphs(cell.paragraphs, replacements)
 
-def generate_certificate(town1, nation1, town2, nation2, submitter, approver, output_docx_path, output_pdf_path):
+def generate_certificate(town1, nation1, town2, nation2, submitter, approver, output_odt_path, output_pdf_path):
     document = Document(template_path)
     current_date = datetime.utcnow().strftime('%Y-%m-%d')
     replacements = {
@@ -97,9 +97,9 @@ def generate_certificate(town1, nation1, town2, nation2, submitter, approver, ou
         replace_text_in_tables(header.tables, replacements)
         replace_text_in_tables(footer.tables, replacements)
 
-    document.save(output_docx_path)
+    document.save(output_odt_path)
 
-    # Convert DOCX to PDF using libreoffice
-    subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', certificates_dir, output_docx_path], check=True)
+    # Convert ODT to PDF using libreoffice
+    subprocess.run(['libreoffice', '--headless', '--convert-to', 'pdf', '--outdir', certificates_dir, output_odt_path], check=True)
 
 bot.run(TOKEN)
