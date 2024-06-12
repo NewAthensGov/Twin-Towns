@@ -12,7 +12,7 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = discord.Bot(intents=intents)
 
-TOKEN = 'YOUR_DISCORD_BOT_TOKEN'
+TOKEN = 'TOKEN'
 template_path = 'Twin Towns Certificate Template.docx'
 certificates_dir = 'certificates'
 
