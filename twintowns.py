@@ -7,6 +7,7 @@ from datetime import datetime
 from docx2pdf import convert
 import asyncio
 import os
+import subprocess
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -99,7 +100,5 @@ def generate_certificate(town1, nation1, town2, nation2, submitter, approver, ou
 
     document.save(output_docx_path)
 
-    # Convert DOCX to PDF using docx2pdf
-    convert(output_docx_path, output_pdf_path)
-
+    subprocess.call(["unoconv", output_docx_path]) 
 bot.run(TOKEN)
